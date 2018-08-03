@@ -261,7 +261,7 @@ resource "aws_launch_configuration" "wp_lc" {
               find /var/www -type f -exec chmod 0664 {} \;
               instance_id=$(curl http://18.206.138.131/latest/meta-data/instance-id)
               echo "<h3>Hello World $instance_id</h3>" > /var/www/html/index.html
-              
+              EOF
   lifecycle {
     create_before_destroy = true
   }
