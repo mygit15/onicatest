@@ -250,8 +250,17 @@ resource "aws_launch_configuration" "wp_lc" {
    key_name             = "test"
    user_data = <<-EOF
               #!/bin/bash
-             echo "Hello, World" > index.html
-              nohup busybox httpd -f -p 8080 &
+               yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              usermod -a -G apache ec2-user
+              chown -R ec2-user:apache /var/www
+              chmod 2775 /var/www
+              find /var/www -type d -exec chmod 2775 {} \;
+              find /var/www -type f -exec chmod 0664 {} \;
+              instance_id=$(curl http://18.206.138.131/latest/meta-data/instance-id)
+              echo "<h3>Hello World $instance_id</h3>" > /var/www/html/index.html
               EOF
   lifecycle {
     create_before_destroy = true
